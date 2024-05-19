@@ -22,14 +22,13 @@ typedef struct{
 
 }Turing_Machine;
 
-Tape* init_tape(char* new_items, int new_num, int new_head){
+Tape* init_tape(char new_items[], int new_num, int new_head){
     Tape* tape = malloc(sizeof(Tape));
     tape->head = new_head;
     tape->num = new_num;
-    tape->items = malloc((new_num+1) * sizeof(char*));
+    tape->items = malloc((new_num+1));
     for(int i=0; i<new_num; i++){
-        tape->items[i] = malloc(sizeof(new_items[i]));
-        strcpy(tape->items[i], new_items[i]);
+      tape->items[i] = new_items[i];
     }
     tape->items[new_num] = '\0';
     return tape;
@@ -313,12 +312,13 @@ int main()
 
     if (TM != NULL) {
         printf("Successfully created the Turing Machine.\n");
+        //getchar();
     }
 
     //-------------------------------------------------------------------------------
 
     printf("Now enter the input string. example: \"ababcba\" (without quotations) \n");
-    getchar();
+    //getchar();
     char w[MAX_SIZE];  // input string
     if (fgets(w, sizeof(w), stdin) == NULL) {
         printf("Error reading input\n");
@@ -344,12 +344,15 @@ int main()
       scanf("%*[^\n]");
     }
     }
+    printf("string: %s",w);
+    printf("Head: %d", head);
+    printf("length: %d",strlen(w));
 
-    Tape* tape = init_tape(w,strlen(w)-1,head);
+    Tape* tape = init_tape(w,strlen(w),head);
 
-    display_tape(tape);
+   // display_tape(tape);
 
-    //tape = execute_TM(TM, tape);
+    tape = execute_TM(TM, tape);
 
 
 
