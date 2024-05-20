@@ -49,7 +49,7 @@ This program simulates a basic Turing Machine. It allows users to input the mach
 
 Please enter the number of states: 3
 Please enter the set of input alphabet (separated by commas only): a,b
-Please enter the set of all alphabet (including blank) (separated by commas only): a,b,_
+Please enter the set of all alphabet (including blank) (separated by commas only): a,b,#
 Enter the start state: 0
 Enter the number of transition states: 2
 Enter the transition state number 1 separated by commas: 0,a,1,b,R
