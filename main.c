@@ -1,3 +1,6 @@
+// THIS PROGRAM WAS WRITTEN BY JANA ESSAM - 7623
+// FOR SWITCHING THEORY AND MODELS OF COMPUTATION COURSE.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
