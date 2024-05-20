@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_SIZE 30
 
+char actions[] = {'L','R','Y','N','\0'};
 
 typedef struct{
    // int items[SIZE];
@@ -17,7 +19,7 @@ typedef struct{
     char* input_alphabet;
     char* tape_alphabet;
     char S; // start state
-    int num; // number of states
+    int num; // number of transitions
     char **transitions;   // transition format = [current state , current alphabet (a), next state , new alphabet (b) (replace a with b), action ]
 
 }Turing_Machine;
@@ -110,30 +112,106 @@ int check_in_array(char ch, char* array){  // function to check if an element ex
     int i = 0;
     while (array[i] != '\0') {
         if (array[i] == ch){
-            return 1;
+            return i;   // return index of element
         }
         i++;
     }
-    return 0;
+    return -1;
 }
 
 char* encode_TM(Turing_Machine* TM){
-    // define string to store description of TM
-    char* tape_1;
 
-    // part 1: encode states
-    // 0->1 , 1->11 , 2->111 , ...
-    for(int i=0; i<strlen(TM->K); i++){
-        for(int j=0; j<=i; j++){
-           strcat(tape_1,'1');
+    //char tape_1[100];
+    char *tape_1 = malloc(100 * sizeof(char));
+    int index; // buffer
+    int tape_1_len = 0;
+
+    // loop through all transitions
+    // transition format = [current state , current alphabet (a), next state , new alphabet (b) (replace a with b), action ]
+    for(int i = 0; i < TM->num; i++){
+        // loop through each element of the transition
+        for(int j = 0; j<5; j++){
+            switch(j){
+                // current state
+                case 0:
+                // next state
+                case 2:
+                   index = check_in_array(TM->transitions[i][j], TM->K);  // get index of state in state array
+                   // 0->1 , 1->11 , 2->111 , ...
+                   if (index != -1){
+                        for(int a=0; a<=index; a++){
+                            tape_1[tape_1_len] = '1';
+                            tape_1_len++;
+                            //printf("1");
+                        }
+                        // add separator '0'
+                        tape_1[tape_1_len] = '0';
+                        tape_1_len++;
+                       // printf("0");
+                   }
+                   else{
+                        printf("Error! encountered a state not in state array.");
+                        exit(3);
+                   }
+
+                    break;
+
+                // current alphabet
+                case 1:
+                // new alphabet
+                case 3:
+                    index = check_in_array(TM->transitions[i][j], TM->tape_alphabet);
+
+                    if (index != -1){
+                        for(int a=0; a<=index; a++){
+                            tape_1[tape_1_len] = '1';
+                            tape_1_len++;
+                            //printf("1");
+                        }
+                        // add separator '0'
+                        tape_1[tape_1_len] = '0';
+                        tape_1_len++;
+                        //printf("0");
+                   }
+                   else{
+                        printf("Error! encountered an alphabet not in input array.");
+                        exit(3);
+                   }
+                    break;
+
+                // action
+                case 4:
+                    // L->1 , R->11 , Y->111 , N->1111
+                    index = check_in_array(TM->transitions[i][j], actions);
+
+                    if (index != -1){
+                        for(int a=0; a<=index; a++){
+                            tape_1[tape_1_len] = '1';
+                            tape_1_len++;
+                            //printf("1");
+                        }
+                        // add separator '0'
+                        tape_1[tape_1_len] = '0';
+                        tape_1_len++;
+                        //printf("0");
+                        tape_1[tape_1_len] = '0';
+                        tape_1_len++;
+                        //printf("0");
+                   }
+                   else{
+                        printf("Error! encountered an action not in actions array.");
+                        exit(3);
+                   }
+                    break;
+            }
         }
-        strcat(tape_1,'0');
+
     }
-    // add separator
-    strcat(tape_1,'00');
+    tape_1[tape_1_len] = '\0';
 
-    // encode
+    //strcat(tape_1,'\0');
 
+    return tape_1;
 
 }
 
@@ -203,21 +281,8 @@ int main()
     char states_arr[states_num+1];
 
     for(int i = 0; i< states_num; i++){
-        states_arr[i]=i+'0';
+        states_arr[i]=i+'0';  // add '0' to convert int to string
     }
-
-//    char states_str[MAX_SIZE];  // Allocate memory for the input string
-//    if (fgets(states_str, sizeof(states_str), stdin) == NULL) {
-//        printf("Error reading input\n");
-//        return 1;
-//    }
-//
-//    // Remove newline character from fgets input
-//    size_t states_len = strlen(states_str);
-//    if (states_len > 0 && states_str[states_len - 1] == '\n') {
-//        states_str[states_len - 1] = '\0';
-//    }
-//    char* states_arr = string_to_array(states_str);
 
 
     // ----------------------------------------------------------------------------
@@ -239,7 +304,7 @@ int main()
 
 
     // ----------------------------------------------------------------------------
-    printf("Please enter the set of all alphabet (NOT including blank) (separated by commas only):");
+    printf("Please enter the set of all alphabet (including blank) (separated by commas only):");
     char alph_str[MAX_SIZE];  // Allocate memory for the input string
     if (fgets(alph_str, sizeof(alph_str), stdin) == NULL) {
         printf("Error reading input\n");
@@ -249,8 +314,7 @@ int main()
     // Remove newline character from fgets input
     size_t alph_len = strlen(alph_str);
     if (alph_len > 0 && alph_str[alph_len - 1] == '\n') {
-        alph_str[alph_len - 1] = '#';
-        alph_str[alph_len] = '\0';
+        inp_str[inp_len - 1] = '\0';
     }
 
     char* alph_arr = string_to_array(alph_str);
@@ -262,7 +326,7 @@ int main()
     char start;
     while(1){
         scanf("%c",&start);
-        if (check_in_array(start,states_arr))
+        if (check_in_array(start,states_arr) != -1)
             break;
         else
             printf("That state does not exist! Please enter a state from the entered states:\n");
@@ -312,13 +376,11 @@ int main()
 
     if (TM != NULL) {
         printf("Successfully created the Turing Machine.\n");
-        //getchar();
     }
 
     //-------------------------------------------------------------------------------
 
     printf("Now enter the input string. example: \"ababcba\" (without quotations) \n");
-    //getchar();
     char w[MAX_SIZE];  // input string
     if (fgets(w, sizeof(w), stdin) == NULL) {
         printf("Error reading input\n");
@@ -333,7 +395,6 @@ int main()
 
     printf("Enter the index of the head on the tape (first index is 0): ");
     int head;
-    //getchar();
 
     while (1) {
     if (scanf("%d", &head) == 1) {
@@ -344,9 +405,6 @@ int main()
       scanf("%*[^\n]");
     }
     }
-    printf("string: %s",w);
-    printf("Head: %d", head);
-    printf("length: %d",strlen(w));
 
     Tape* tape = init_tape(w,strlen(w),head);
 
@@ -354,22 +412,17 @@ int main()
 
     tape = execute_TM(TM, tape);
 
+    printf("\nEncoded Turing Machine: %s", encode_TM(TM));
 
 
 
 
 
-
-
-    display_array(states_arr);
-    display_array(inp_arr);
-    display_array(alph_arr);
+//    display_array(states_arr);
+//    display_array(inp_arr);
+//    display_array(alph_arr);
 
     // free allocated space
-
-    free(states_arr);
-    free(inp_arr);
-    free(alph_arr);
 
     for (int i = 0; i < num; i++) {
         free(transitions[i]);
@@ -380,6 +433,8 @@ int main()
     }
     free(TM->transitions);
     free(TM);
+
+    free(tape);
 
 
     return 0;
