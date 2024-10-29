@@ -18,8 +18,8 @@ This program simulates a basic Turing Machine. It allows users to input the mach
 
 1. **Clone the Repository**:
     ```bash
-    git clone https://github.com/username/mini-turing-machine.git
-    cd mini-turing-machine
+    git clone https://github.com/JanaElnagar/Turing-Machine.git
+    cd Turing-Machine
     ```
 
 2. **Compile the Code**:
