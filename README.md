@@ -1,8 +1,5 @@
 # Turing Machine Simulator
 
-**Author**: Jana Essam   
-**Course**: Switching Theory and Models of Computation
-
 ## Overview
 
 This program simulates a basic Turing Machine. It allows users to input the machine's states, alphabets, transitions, and an input string, and then simulates the execution of the Turing Machine on that string. It also provides an encoded representation of the Turing Machine.
@@ -75,11 +72,6 @@ Enter the index of the head on the tape (first index is 0): 0
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-## Acknowledgements
-
-This project was developed as part of the Switching Theory and Models of Computation course. Special thanks to the course instructors and peers for their support and guidance.
-
 ---
 
 Feel free to explore and contribute to the project. For any issues or suggestions, please open an issue or submit a pull request.
